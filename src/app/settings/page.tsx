@@ -185,7 +185,7 @@ function Settings() {
 
       <Section title="Data">
         <LinkRow href="/settings/import/" label="Import from spreadsheet" />
-        <button className="press block w-full text-left" onClick={() => exportCsv(data)}>
+        <button className="press block w-full text-left" onClick={() => void exportCsv(data)}>
           <Row>
             <span>Export to CSV</span>
             <span className="text-sm text-muted">{data.expenses.length} expenses</span>
@@ -195,14 +195,18 @@ function Settings() {
 
       <Section title="Account">
         <Row>
-          <span className="text-muted">{backend.kind === "demo" ? "Demo mode (this browser only)" : backend.email}</span>
-          <button onClick={() => void backend.signOut()} className="press text-sm text-muted hover:text-fg">
-            Sign out
-          </button>
+          <span className="text-muted">
+            {backend.kind === "demo" ? "Demo mode (this browser only)" : backend.kind === "claude" ? "Saved to your Claude account" : backend.email}
+          </span>
+          {backend.kind !== "claude" && (
+            <button onClick={() => void backend.signOut()} className="press text-sm text-muted hover:text-fg">
+              Sign out
+            </button>
+          )}
         </Row>
         <div className="pt-8">
           <Button variant="danger" className="w-full" onClick={() => void deleteAccount()}>
-            {confirmDelete ? "Tap again to delete everything" : "Delete account and all data"}
+            {confirmDelete ? "Tap again to delete everything" : backend.kind === "claude" ? "Delete all my data" : "Delete account and all data"}
           </Button>
           {confirmDelete && <p className="mt-3 text-center text-sm text-muted">This can&apos;t be undone.</p>}
         </div>

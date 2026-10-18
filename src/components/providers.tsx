@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import type { Backend } from "@/lib/backend";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { DataProvider } from "@/lib/data";
 import { ExpenseSheetProvider } from "./expense-sheet";
@@ -16,10 +17,10 @@ function SessionData({ children }: { children: ReactNode }) {
   );
 }
 
-export function Providers({ children }: { children: ReactNode }) {
+export function Providers({ children, connect }: { children: ReactNode; connect?: () => Promise<Backend | null> }) {
   return (
     <ToastProvider>
-      <AuthProvider>
+      <AuthProvider connect={connect}>
         <SessionData>{children}</SessionData>
       </AuthProvider>
     </ToastProvider>

@@ -6,7 +6,7 @@ import type { ListTable, Snapshot, TableName, Tables } from "./types.ts";
  * applies changes optimistically and then writes them through a Backend.
  */
 export interface Backend {
-  kind: "supabase" | "demo";
+  kind: "supabase" | "demo" | "claude";
   userId: string;
   email: string | null;
   load(): Promise<Snapshot>;

@@ -50,12 +50,20 @@ export function toCsv(s: Snapshot): string {
   return [header, ...lines].map((r) => r.map(escape).join(",")).join("\r\n");
 }
 
-export function exportCsv(s: Snapshot) {
-  const blob = new Blob(["﻿" + toCsv(s)], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
+export async function exportCsv(s: Snapshot) {
+  const filename = `spendly-expenses-${new Date().toISOString().slice(0, 10)}.csv`;
+  const data = "\uFEFF" + toCsv(s);
+  // Inside the Claude viewer, plain downloads are blocked; its downloads capability asks the viewer instead.
+  const claude = (window as { claude?: { use(name: string): Promise<{ save(r: { filename: string; data: string }): Promise<unknown> } | null> } }).claude;
+  const downloads = claude?.use ? await claude.use("downloads").catch(() => null) : null;
+  if (downloads) {
+    await downloads.save({ filename, data }).catch(() => undefined);
+    return;
+  }
+  const url = URL.createObjectURL(new Blob([data], { type: "text/csv;charset=utf-8" }));
   const a = document.createElement("a");
   a.href = url;
-  a.download = `spendly-expenses-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = filename;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

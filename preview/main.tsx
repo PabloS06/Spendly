@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Providers } from "@/components/providers";
-import { DEMO_SESSION_KEY, seedDemo, storage } from "@/lib/backend";
-import { sampleSnapshot } from "@/lib/sample";
 import { MemoryRouter } from "./next-shim";
+import { connectClaudeStorage } from "./claude-backend";
 import Home from "@/app/page";
 import Login from "@/app/login/page";
 import Onboarding from "@/app/onboarding/page";
@@ -23,21 +23,37 @@ const ROUTES: Record<string, () => React.ReactNode> = {
   "/rollover": Rollover,
 };
 
-// The shareable demo opens on sample data so there's something to look at straight away.
-if (!storage.get(DEMO_SESSION_KEY)) {
-  seedDemo(sampleSnapshot());
-  storage.set(DEMO_SESSION_KEY, "1");
+let notifyFallback: (() => void) | null = null;
+
+// Saves to the viewer's Claude account; without it, falls back to this browser.
+async function connect() {
+  const backend = await connectClaudeStorage().catch(() => null);
+  if (!backend) notifyFallback?.();
+  return backend;
 }
 
-createRoot(document.getElementById("root")!).render(
-  <MemoryRouter>
-    {(location) => {
-      const Page = ROUTES[location.pathname] ?? Home;
-      return (
-        <Providers>
-          <Page />
-        </Providers>
-      );
-    }}
-  </MemoryRouter>,
-);
+function App() {
+  const [fallback, setFallback] = useState(false);
+  notifyFallback = () => setFallback(true);
+  return (
+    <>
+      {fallback && (
+        <p className="border-b hairline px-5 py-2 text-center text-xs text-muted">
+          Sign in to Claude to save across devices. For now, changes stay in this browser.
+        </p>
+      )}
+      <MemoryRouter>
+        {(location) => {
+          const Page = ROUTES[location.pathname] ?? Home;
+          return (
+            <Providers connect={connect}>
+              <Page />
+            </Providers>
+          );
+        }}
+      </MemoryRouter>
+    </>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(<App />);

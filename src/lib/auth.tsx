@@ -14,7 +14,12 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+/**
+ * `connect` lets a host supply its own storage (the hosted single-file page
+ * saves to the viewer's Claude account); when it yields null, the app falls
+ * back to Supabase or the demo.
+ */
+export function AuthProvider({ children, connect }: { children: ReactNode; connect?: () => Promise<Backend | null> }) {
   const [state, setState] = useState<AuthState>({ status: "loading" });
 
   const signedOut = useCallback(() => setState({ status: "signedOut" }), []);
@@ -25,6 +30,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [signedOut]);
 
   useEffect(() => {
+    if (connect) {
+      let cancelled = false;
+      void connect()
+        .catch(() => null)
+        .then((backend) => {
+          if (cancelled) return;
+          if (backend) setState({ status: "signedIn", backend });
+          else startDemo();
+        });
+      return () => {
+        cancelled = true;
+      };
+    }
     const supabase = getSupabase();
     if (!supabase) {
       if (storage.get(DEMO_SESSION_KEY)) startDemo();
@@ -39,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setState(user ? { status: "signedIn", backend: supabaseBackend(supabase, user.id, user.email ?? null) } : { status: "signedOut" });
     });
     return () => data.subscription.unsubscribe();
-  }, [signedOut, startDemo]);
+  }, [signedOut, startDemo, connect]);
 
   const value = useMemo(() => ({ state, demoAvailable: !supabaseConfigured, startDemo }), [state, startDemo]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
