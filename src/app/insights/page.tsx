@@ -1,6 +1,7 @@
 "use client";
 
 import { AppShell } from "@/components/app-shell";
+import { SpendingTracker } from "@/components/spending-tracker";
 import { Money, useMoney } from "@/components/money";
 import { EmptyState, Label, cx } from "@/components/ui";
 import { currentPeriod, expensesIn, spentByCategory } from "@/lib/budget";
@@ -41,7 +42,11 @@ function Insights() {
   }
 
   return (
-    <div className="space-y-14 pt-6">
+    <div className="grid gap-14 pt-6 lg:grid-cols-2 lg:gap-x-20 lg:pt-10">
+      <div className="min-w-0 lg:col-span-2">
+        <SpendingTracker />
+      </div>
+      <div className="min-w-0 space-y-14">
       {notes.length > 0 && (
         <section aria-label="Observations">
           <ul className="space-y-4">
@@ -73,7 +78,8 @@ function Insights() {
         </div>
       </section>
 
-      <section aria-label="This month vs last month">
+      </div>
+      <section className="min-w-0" aria-label="This month vs last month">
         <div className="flex items-baseline justify-between">
           <Label>This month vs last</Label>
           <span className="flex items-center gap-3 text-[11px] text-muted">

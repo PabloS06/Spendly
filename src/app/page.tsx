@@ -27,9 +27,10 @@ function Home() {
   const over = summary.remaining < 0;
 
   return (
-    <div className="pt-6">
+    <div className="pt-6 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-x-20 lg:pt-10">
+      <div className="lg:sticky lg:top-8 lg:self-start">
       <section aria-label="Left this month">
-        <p className={`num text-[60px] font-semibold leading-none tracking-[-0.045em] ${over ? "text-danger" : ""}`}>
+        <p className={`num text-[clamp(44px,15vw,64px)] font-semibold leading-none tracking-[-0.045em] md:text-[72px] ${over ? "text-danger" : ""}`}>
           {money(Math.abs(hero), Math.abs(hero) < 100_000)}
         </p>
         <p className="mt-3 text-[15px] text-muted">{over ? "over budget this month" : "left this month"}</p>
@@ -40,8 +41,26 @@ function Home() {
         </p>
       </section>
 
+      {upcoming.length > 0 && (
+        <section className="mt-12 lg:mt-14" aria-label="Upcoming fixed costs">
+          <Label>Next 7 days</Label>
+          <ul className="mt-2">
+            {upcoming.map(({ cost, date }) => (
+              <li key={cost.id} className="flex items-baseline justify-between border-b hairline py-3.5 text-[15px]">
+                <span>
+                  {cost.name}
+                  <span className="num ml-2 text-sm text-muted">{date === today ? "Today" : formatDate(date)}</span>
+                </span>
+                <Money cents={cost.amount} className="text-muted" />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      </div>
+
       {summary.budgetTotal === 0 ? (
-        <div className="mt-14 border-t hairline pt-8">
+        <div className="mt-14 border-t hairline pt-8 lg:mt-0 lg:border-t-0 lg:pt-0">
           <p className="text-[15px] font-medium">No spending plan yet</p>
           <p className="mt-1 text-sm text-muted">Set how much goes to each category and Spendly will track it for you.</p>
           <Link href="/onboarding/?edit=plan">
@@ -51,7 +70,7 @@ function Home() {
           </Link>
         </div>
       ) : (
-        <section className="mt-12" aria-label="Categories">
+        <section className="mt-12 lg:mt-0" aria-label="Categories">
           <div className="flex items-baseline justify-between">
             <Label>Categories</Label>
             <span className="num text-xs text-muted">
@@ -79,22 +98,6 @@ function Home() {
         </section>
       )}
 
-      {upcoming.length > 0 && (
-        <section className="mt-12" aria-label="Upcoming fixed costs">
-          <Label>Next 7 days</Label>
-          <ul className="mt-2">
-            {upcoming.map(({ cost, date }) => (
-              <li key={cost.id} className="flex items-baseline justify-between border-b hairline py-3.5 text-[15px]">
-                <span>
-                  {cost.name}
-                  <span className="num ml-2 text-sm text-muted">{date === today ? "Today" : formatDate(date)}</span>
-                </span>
-                <Money cents={cost.amount} className="text-muted" />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
     </div>
   );
 }

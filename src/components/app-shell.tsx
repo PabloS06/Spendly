@@ -51,8 +51,8 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
   const path = usePathname();
   return (
     <AppGate>
-      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-xl">
-        <header className="flex h-16 items-center justify-between px-5 pt-[env(safe-area-inset-top)]">
+      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-3xl lg:max-w-5xl">
+        <header className="flex h-16 items-center justify-between px-[max(1.25rem,env(safe-area-inset-left))] pt-[env(safe-area-inset-top)] md:h-20 md:px-8">
           <Link href="/" className="text-[15px] font-semibold tracking-tight">
             {title ?? "Spendly"}
           </Link>
@@ -72,11 +72,11 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
             <Avatar />
           </div>
         </header>
-        <main className="flex-1 px-5 pb-32 md:pb-16">{children}</main>
+        <main className="flex-1 px-[max(1.25rem,env(safe-area-inset-left))] pb-32 md:px-8 md:pb-16">{children}</main>
       </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t hairline bg-bg/90 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
-        <div className="mx-auto grid h-16 max-w-md grid-cols-4 items-center">
+        <div className="mx-auto grid h-16 max-w-md grid-cols-4 items-center px-[env(safe-area-inset-left)]">
           {NAV.slice(0, 2).map((item) => (
             <NavItem key={item.href} {...item} active={isActive(path, item.href)} />
           ))}

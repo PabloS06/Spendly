@@ -117,7 +117,7 @@ function Onboarding() {
   const copy = COPY[step];
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-10 pt-[max(1.25rem,env(safe-area-inset-top))]">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-[max(1.25rem,env(safe-area-inset-left))] md:max-w-lg pb-10 pt-[max(1.25rem,env(safe-area-inset-top))]">
       <div className="flex h-11 items-center justify-between">
         {edit ? (
           <Link href="/settings/" className="press -ml-2 p-2 text-muted hover:text-fg" aria-label="Back to settings">

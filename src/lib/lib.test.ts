@@ -125,3 +125,13 @@ test("insights produce at most three observations on sample data", () => {
   assert.ok(notes.length <= 3);
   console.log(notes);
 });
+
+test("week starts on Monday and daily totals fill gaps", async () => {
+  const { weekStart, dailyTotals } = await import("./insights.ts");
+  assert.equal(weekStart("2026-10-18"), "2026-10-12"); // Sunday -> Monday before
+  assert.equal(weekStart("2026-10-12"), "2026-10-12");
+  const s = snapshot([exp(500, "g", "2026-10-13"), exp(250, "e", "2026-10-13")]);
+  const days = dailyTotals(s, "2026-10-12", "2026-10-18");
+  assert.equal(days.length, 7);
+  assert.deepEqual(days[1], { date: "2026-10-13", spent: 750 });
+});

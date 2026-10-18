@@ -90,3 +90,28 @@ export function monthlyTotals(s: Snapshot, period: string, count: number): { per
     return { period: p, spent: sum(expensesIn(s.expenses, periodRange(p, startDay)), (e) => e.amount) };
   });
 }
+
+/** Monday of the week containing `iso`. */
+export function weekStart(iso: string): string {
+  const day = (parseISODate(iso).getDay() + 6) % 7; // Monday = 0
+  return addDays(iso, -day);
+}
+
+/** Spending per day from `start` to `end` inclusive. */
+export function dailyTotals(s: Snapshot, start: string, end: string): { date: string; spent: number }[] {
+  const byDay = new Map<string, number>();
+  for (const e of expensesIn(s.expenses, { start, end })) byDay.set(e.spent_on, (byDay.get(e.spent_on) ?? 0) + e.amount);
+  const days = daysBetween(start, end) + 1;
+  return Array.from({ length: days }, (_, i) => {
+    const date = addDays(start, i);
+    return { date, spent: byDay.get(date) ?? 0 };
+  });
+}
+
+/** The plan (plus carry-in) for the period, spread evenly per day. */
+export function dailyAllowance(s: Snapshot, period: string): number {
+  const startDay = s.profile?.month_start_day ?? 1;
+  const range = periodRange(period, startDay);
+  const budget = sum(budgetsFor(s.budgets, period), (b) => b.amount) + (s.months.find((m) => m.period === period)?.carry_in ?? 0);
+  return Math.round(budget / (daysBetween(range.start, range.end) + 1));
+}

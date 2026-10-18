@@ -71,7 +71,7 @@ function Activity() {
   const total = sum(days, ([, list]) => sum(list, (e) => e.amount));
 
   return (
-    <div className="pt-2">
+    <div className="mx-auto max-w-2xl pt-2 lg:pt-6">
       <div className="flex h-11 items-center gap-3 border-b hairline">
         <Search {...ICON} size={18} className="text-faint" />
         <input

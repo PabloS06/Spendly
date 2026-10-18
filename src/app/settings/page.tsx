@@ -29,7 +29,7 @@ const selectClass = "h-9 rounded-full border hairline bg-transparent px-3 text-s
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mt-12 first:mt-4">
+    <section className="mt-12 break-inside-avoid first:mt-4 lg:mb-12 lg:mt-0">
       <Label>{title}</Label>
       <div className="mt-2">{children}</div>
     </section>
@@ -99,7 +99,7 @@ function Settings() {
   }
 
   return (
-    <div>
+    <div className="lg:columns-2 lg:gap-x-16 lg:pt-6">
       <Section title="Preferences">
         <Row>
           <span>Currency</span>

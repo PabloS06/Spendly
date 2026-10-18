@@ -58,9 +58,9 @@ function Rollover() {
 
   const saved = profile.savings_goal;
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-10 pt-16">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-[max(1.25rem,env(safe-area-inset-left))] md:max-w-lg pb-10 pt-16">
       <Label>{periodLabel(pendingRollover, profile.month_start_day, fmt.locale)} is done</Label>
-      <p className={cx("num mt-4 text-[56px] font-semibold leading-none tracking-[-0.045em]", summary.remaining < 0 && "text-danger")}>
+      <p className={cx("num mt-4 text-[clamp(44px,14vw,56px)] font-semibold leading-none tracking-[-0.045em]", summary.remaining < 0 && "text-danger")}>
         {money(Math.abs(summary.remaining))}
       </p>
       <p className="mt-3 text-[15px] text-muted">{summary.remaining >= 0 ? "under budget" : "over budget"}</p>

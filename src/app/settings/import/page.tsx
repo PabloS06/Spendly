@@ -115,7 +115,7 @@ function Import() {
   const missing = mapping ? (["date", "amount"] as const).filter((f) => mapping[f] === null) : [];
 
   return (
-    <main className="mx-auto w-full max-w-md px-5 pb-16 pt-[max(1.25rem,env(safe-area-inset-top))] md:max-w-xl">
+    <main className="mx-auto w-full max-w-md px-[max(1.25rem,env(safe-area-inset-left))] pb-16 pt-[max(1.25rem,env(safe-area-inset-top))] md:max-w-xl">
       <div className="flex h-11 items-center">
         <Link href={backHref} className="press -ml-2 p-2 text-muted hover:text-fg" aria-label="Back">
           <ArrowLeft {...ICON} />
