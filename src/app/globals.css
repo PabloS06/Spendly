@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --fg: #0a0a0a;
+  --muted: #6b6b6b;
+  --faint: #a3a3a3;
+  --line: #e7e5e4;
+  --track: #ecebe9;
+  --accent: #0f7b5f;
+  --accent-fg: #ffffff;
+  --warn: #b45309;
+  --danger: #c2261d;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0a0a;
+    --surface: #131313;
+    --fg: #f5f5f4;
+    --muted: #9a9a9a;
+    --faint: #5c5c5c;
+    --line: #1f1f1f;
+    --track: #232323;
+    --accent: #3cc497;
+    --accent-fg: #04140e;
+    --warn: #f0a33a;
+    --danger: #f2665c;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-track: var(--track);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  font-feature-settings: "ss01", "cv11";
+}
+
+/* Every amount uses tabular figures so columns of numbers line up. */
+.num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Soft, haptic-style press state. */
+.press {
+  transition: transform 150ms var(--ease-out), opacity 150ms var(--ease-out), background-color 150ms var(--ease-out);
+}
+.press:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
+.hairline {
+  border-color: var(--line);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.toast-in { animation: toast-in 180ms var(--ease-out); }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.fade-in { animation: fade-in 180ms var(--ease-out); }
+
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+.sheet-up { animation: sheet-up 200ms var(--ease-out); }
+
+@keyframes pulse-soft {
+  50% { opacity: 0.5; }
+}
+.skeleton {
+  background: var(--track);
+  border-radius: 6px;
+  animation: pulse-soft 1.4s ease-in-out infinite;
+}
+
+/* Thin, quiet range slider for the spending plan. */
+input[type="range"] {
+  appearance: none;
+  height: 20px;
+  background: transparent;
+  width: 100%;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 2px;
+  background: linear-gradient(to right, var(--accent) var(--fill, 0%), var(--track) var(--fill, 0%));
+  border-radius: 2px;
+}
+input[type="range"]::-moz-range-track {
+  height: 2px;
+  background: linear-gradient(to right, var(--accent) var(--fill, 0%), var(--track) var(--fill, 0%));
+  border-radius: 2px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -8px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1.5px solid var(--fg);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1.5px solid var(--fg);
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
