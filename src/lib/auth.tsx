@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { DEMO_SESSION_KEY, demoBackend, supabaseBackend, type Backend } from "./backend.ts";
+import { DEMO_SESSION_KEY, demoBackend, storage, supabaseBackend, type Backend } from "./backend.ts";
 import { getSupabase, supabaseConfigured } from "./supabase.ts";
 
 type AuthState = { status: "loading" } | { status: "signedOut" } | { status: "signedIn"; backend: Backend };
@@ -20,14 +20,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signedOut = useCallback(() => setState({ status: "signedOut" }), []);
 
   const startDemo = useCallback(() => {
-    localStorage.setItem(DEMO_SESSION_KEY, "1");
+    storage.set(DEMO_SESSION_KEY, "1");
     setState({ status: "signedIn", backend: demoBackend(signedOut) });
   }, [signedOut]);
 
   useEffect(() => {
     const supabase = getSupabase();
     if (!supabase) {
-      if (localStorage.getItem(DEMO_SESSION_KEY)) startDemo();
+      if (storage.get(DEMO_SESSION_KEY)) startDemo();
       else signedOut();
       return;
     }

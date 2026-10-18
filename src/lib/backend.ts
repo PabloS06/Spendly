@@ -79,21 +79,46 @@ export const DEMO_USER_ID = "00000000-0000-4000-8000-000000000000";
 const DEMO_KEY = "spendly-demo-data";
 export const DEMO_SESSION_KEY = "spendly-demo-session";
 
+/** localStorage that never throws (private windows and sandboxed frames can block it). */
+export const storage = {
+  get(key: string): string | null {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  set(key: string, value: string) {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      // Blocked or full: the demo keeps working in memory.
+    }
+  },
+  remove(key: string) {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      // Nothing stored to remove.
+    }
+  },
+};
+
+// In-memory fallback so the demo still works when storage is blocked.
+let memory: Snapshot | null = null;
+
 function readDemo(): Snapshot {
   try {
-    const raw = localStorage.getItem(DEMO_KEY);
-    return raw ? { ...emptySnapshot(), ...JSON.parse(raw) } : emptySnapshot();
+    const raw = storage.get(DEMO_KEY);
+    return raw ? { ...emptySnapshot(), ...JSON.parse(raw) } : (memory ?? emptySnapshot());
   } catch {
-    return emptySnapshot();
+    return memory ?? emptySnapshot();
   }
 }
 
 function writeDemo(s: Snapshot) {
-  try {
-    localStorage.setItem(DEMO_KEY, JSON.stringify(s));
-  } catch {
-    // Storage full or blocked: the demo keeps working in memory.
-  }
+  memory = structuredClone(s);
+  storage.set(DEMO_KEY, JSON.stringify(s));
 }
 
 export function demoBackend(onSignOut: () => void): Backend {
@@ -129,12 +154,13 @@ export function demoBackend(onSignOut: () => void): Backend {
       writeDemo(snapshot);
     },
     async deleteAccount() {
-      localStorage.removeItem(DEMO_KEY);
-      localStorage.removeItem(DEMO_SESSION_KEY);
+      memory = null;
+      storage.remove(DEMO_KEY);
+      storage.remove(DEMO_SESSION_KEY);
       onSignOut();
     },
     async signOut() {
-      localStorage.removeItem(DEMO_SESSION_KEY);
+      storage.remove(DEMO_SESSION_KEY);
       onSignOut();
     },
   };

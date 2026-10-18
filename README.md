@@ -15,6 +15,8 @@ npm run dev          # http://localhost:3000
 
 With no Supabase credentials the app runs in **demo mode**: the login screen offers *Try the demo* (fresh start with onboarding) and *Explore with sample data* (six months of realistic student spending). Demo data stays in that browser's localStorage.
 
+`npm run build:preview` bundles the demo into one self-contained file, `preview/dist/spendly.html`, that opens with sample data (used for the shareable preview).
+
 Other scripts: `npm run build` (static export to `out/`), `npm test` (unit tests for budget maths, dates, money parsing, import and CSV), `npm run typecheck`.
 
 ## Connect Supabase
